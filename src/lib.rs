@@ -44,6 +44,10 @@ pub struct RedisInfo {
 
 impl RedisInfo {
     fn new(info: HashMap<&str, &str>) -> Self {
+        let keys = match info.get("db0").copied() {
+            Some(i) => i.split_once(",").unwrap().0.split_once("=").unwrap().1,
+            None => "0",
+        };
         Self {
             used_cpu_sys: String::from(info.get("used_cpu_sys").copied().unwrap()), 
             used_cpu_user: String::from(info.get("used_cpu_user").copied().unwrap()),
@@ -51,7 +55,7 @@ impl RedisInfo {
             blocked_clients: String::from(info.get("blocked_clients").copied().unwrap()),
             used_memory_human: String::from(info.get("used_memory_human").copied().unwrap()),
             used_memory_rss_human: String::from(info.get("used_memory_rss_human").copied().unwrap()),
-            keys: String::from(info.get("db0").copied().unwrap().split_once(",").unwrap().0.split_once("=").unwrap().1),
+            keys: String::from(keys),
             total_commands_processed: String::from(info.get("total_commands_processed").copied().unwrap()),
             expired_keys: String::from(info.get("expired_keys").copied().unwrap()),
             evicted_keys: String::from(info.get("evicted_keys").copied().unwrap()),
